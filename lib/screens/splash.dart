@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:todo/screens/home_screen.dart';
+import 'package:todo/utils/constants/colors.dart';
 import 'package:todo/utils/constants/image_string.dart';
-import 'package:todo/utils/constants/size.dart';
 import 'package:get/get.dart';
 
 class SplashScreen extends StatelessWidget {
@@ -10,9 +9,9 @@ class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: TColors.white,
       body: Center(
         child: Column(
-          // mainAxisAlignment: .center,
           children: [
             Image(
               height: MediaQuery.of(context).size.height * 0.69,
@@ -20,66 +19,64 @@ class SplashScreen extends StatelessWidget {
             ),
             SizedBox(
               width: MediaQuery.of(context).size.width * 0.7,
-              child: Text(
+              child: const Text(
                 'Task Management & To-Do List',
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: 'LexendDeca',
                   fontSize: 24,
-                  fontWeight: FontWeight.w600, // Bold
+                  fontWeight: FontWeight.w600,
                 ),
-                textAlign: .center,
+                textAlign: TextAlign.center,
               ),
             ),
             const SizedBox(height: 10),
             SizedBox(
               width: MediaQuery.of(context).size.width * 0.8,
-              child: Text(
+              child: const Text(
                 'This productive tool is designed to help you better manage your task project-wise conveniently!',
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: 'LexendDeca',
                   fontSize: 12,
                   fontWeight: FontWeight.w200,
                 ),
-                textAlign: .center,
+                textAlign: TextAlign.center,
               ),
             ),
             const SizedBox(height: 12),
             SizedBox(
               width: MediaQuery.of(context).size.width * 0.7,
-              child: ElevatedButton(
-                onPressed: () => Get.toNamed('/home'),
-                // {
-                //   Navigator.push(
-                //     context,
-                //     MaterialPageRoute(builder: (context) => const HomeScreen()),
-                //   );
-                // },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.purple,
-                  foregroundColor: Colors.white,
-                  shadowColor: Colors.blueAccent,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12), // set radius
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 14,
-                  ),
-                ),
-                child: Row(
-                  mainAxisSize: .min,
-                  children: [
-                    Text(
-                      'Get Started',
-                      style: const TextStyle(
-                        fontFamily: 'Poppins', // your font name
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
+              child: GestureDetector(
+                onTap: () => Get.offNamed('/login'), // Use offNamed to prevent going back to splash
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    gradient: const LinearGradient(
+                      colors: [TColors.primary, Color(0xFFFFB800)],
                     ),
-                    const SizedBox(width: 8),
-                    const Icon(Icons.arrow_forward_rounded, size: 20),
-                  ],
+                    boxShadow: [
+                      BoxShadow(
+                        color: TColors.primary.withValues(alpha: 0.3),
+                        blurRadius: 10,
+                        offset: const Offset(0, 5),
+                      )
+                    ],
+                  ),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Get Started',
+                        style: TextStyle(
+                          color: TColors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      SizedBox(width: 8),
+                      Icon(Icons.arrow_forward_rounded, color: TColors.white, size: 20),
+                    ],
+                  ),
                 ),
               ),
             ),

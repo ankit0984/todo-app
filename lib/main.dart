@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:todo/screens/auth/login.dart';
+import 'package:todo/screens/auth/signup.dart';
+import 'package:todo/screens/auth/verify_email.dart';
 import 'package:todo/screens/home_screen.dart';
 import 'package:todo/screens/splash.dart';
+import 'package:todo/utils/theme/theme.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,20 +14,19 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: .fromSeed(seedColor: Colors.deepPurple),
-      ),
+      title: 'Todo App',
+      theme: AppTheme.lightTheme,
       initialRoute: "/",
-      // home: SplashScreen(),
       getPages: [
-        GetPage(name: "/", page: () => SplashScreen()),
-        GetPage(name: "/home", page: () => const LoginScreen()),
+        GetPage(name: "/", page: () => const SplashScreen()),
+        GetPage(name: "/login", page: () => const LoginScreen()),
+        GetPage(name: "/signup", page: () => const SignupScreen()),
+        GetPage(name: "/verify_email", page: () => const VerifyEmailScreen()),
+        GetPage(name: "/home", page: () => const HomeScreen()),
       ],
     );
   }
