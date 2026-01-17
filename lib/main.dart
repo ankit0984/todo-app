@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:todo/screens/auth/forget_password.dart';
 import 'package:todo/screens/auth/login.dart';
 import 'package:todo/screens/auth/signup.dart';
 import 'package:todo/screens/auth/verify_email.dart';
@@ -27,6 +28,7 @@ class MyApp extends StatelessWidget {
         GetPage(name: "/signup", page: () => const SignupScreen()),
         GetPage(name: "/verify_email", page: () => const VerifyEmailScreen()),
         GetPage(name: "/home", page: () => const HomeScreen()),
+        GetPage(name: "/forget_password", page: () => const ForgetPasswordScreen()),
       ],
     );
   }

@@ -63,7 +63,7 @@ class LoginForm extends StatelessWidget {
                     children: [
                       /// Forget Password
                       TextButton(
-                        onPressed: () {},
+                        onPressed: ()=>Get.toNamed('/forget_password'),
                         child: const Text(
                           AppTexts.tForgetPassword,
                           style: TextStyle(color: TColors.dark),

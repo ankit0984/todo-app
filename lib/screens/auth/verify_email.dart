@@ -41,7 +41,7 @@ class VerifyEmailScreen extends StatelessWidget {
             children: [
               /// -- Lottie Animation
               Lottie.asset(
-                AppAssets.VerifyEmail,
+                AppAssets.verifyEmail,
                 width: TDeviceUtils.getScreenWidth(context) * 0.6,
               ),
               const SizedBox(height: AppSizes.spaceBtwSections),
