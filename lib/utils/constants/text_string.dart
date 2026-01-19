@@ -89,6 +89,8 @@ class AppTexts {
 
 
   // -- Forget Password Text
+  static const String forgetPasswordTitle = "Forgot Password";
+  static const String forgetPasswordSubTitle = "Don’t worry sometimes people can forget too, enter your email and we will send you a password reset link.";
   static const String tForgetPasswordTitle = "Make Selection!";
   static const String tForgetPasswordSubTitle = "Select one of the options given below to reset your password.";
   static const String tResetViaEMail = "Reset via Mail Verification";

@@ -37,39 +37,62 @@ class ForgetPasswordScreen extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(AppSizes.defaultSpace),
           child: Column(
-
             children: [
               Align(
-                alignment: .center,
-                child: Lottie.asset(AppAssets.forgetPassword,
+                alignment: Alignment.center,
+                child: Lottie.asset(
+                  AppAssets.forgetPassword,
                   width: TDeviceUtils.getScreenHeight() * 0.2,
                 ),
               ),
-              const SizedBox(height: AppSizes.spaceBtwSections/2),
+              const SizedBox(height: AppSizes.spaceBtwSections / 2),
               Text(
-                AppTexts.confirmEmail,
+                AppTexts.forgetPasswordTitle,
                 style: Theme.of(context).textTheme.headlineMedium,
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: AppSizes.spaceBtwItems),
               Text(
-                "Your productivity journey is about to begin. Please verify your email address to start creating tasks and managing your day effectively.",
+                AppTexts.forgetPasswordSubTitle,
                 style: Theme.of(context).textTheme.labelMedium,
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: AppSizes.spaceBtwSections),
               TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'Email',
+                decoration: const InputDecoration(
+                  labelText: AppTexts.email,
                   prefixIcon: Icon(Icons.email),
-                  hintText: 'Enter your registered email'
                 ),
-              )
-
-
-
-            ]
-          )
+              ),
+              const SizedBox(height: AppSizes.spaceBtwSections),
+              GestureDetector(
+                onTap: () => Get.toNamed('/reset-password'), // Handle Continue
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(AppSizes.md),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(AppSizes.borderRadiusLg),
+                    gradient: const LinearGradient(
+                      colors: [TColors.primary, Color(0xFFFFB800)],
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: TColors.primary.withValues(alpha: 0.3),
+                        blurRadius: 10,
+                        offset: const Offset(0, 5),
+                      )
+                    ],
+                  ),
+                  child: const Center(
+                    child: Text(
+                      AppTexts.submit,
+                      style: TextStyle(color: TColors.white, fontWeight: FontWeight.bold, fontSize: 16),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

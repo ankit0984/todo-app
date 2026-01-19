@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import '../../../utils/constants/colors.dart';
 import '../../../utils/constants/size.dart';
 import '../../../utils/constants/text_string.dart';
+import '../../bottom_navigation.dart';
 
 
 
@@ -75,7 +76,7 @@ class LoginForm extends StatelessWidget {
 
                   /// Sign In Button with Gradient
                   GestureDetector(
-                    onTap: () => Get.toNamed('/home'),
+                    onTap: () => Get.to(()=> BottomNavigation()),
                     child: Container(
                       width: double.infinity,
                       padding: const EdgeInsets.all(AppSizes.md),
