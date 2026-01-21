@@ -45,6 +45,11 @@ dependencies:
   avatar_plus: ^0.0.5
   step_progress_indicator: ^1.0.2
   curved_navigation_bar: ^1.0.6
+  flutter_iconly: ^1.0.2
+  iconly: ^1.0.1
+  amicons: ^1.0.1
+  intl: ^0.20.2
+  badges: ^3.1.2
 
 dev_dependencies:
   flutter_test:

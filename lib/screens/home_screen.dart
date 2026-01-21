@@ -20,7 +20,9 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
-          backgroundColor: TColors.white,
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.white, // Ensures the tint remains white
+          scrolledUnderElevation: 0,      // Prevents color change/shadow on scroll
           elevation: 0,
           systemOverlayStyle: const SystemUiOverlayStyle(
             statusBarColor: TColors.white,
@@ -270,7 +272,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   color: Colors.white,
                   child: ListTile(
                     leading: Container(
-
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
                         color: Colors.orange.withValues(alpha: 0.1),
@@ -279,8 +280,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: const Icon(Iconsax.briefcase, color: Color(0xFFF478B8)),
                     ),
                     title: const Text("Office Project"),
-                    subtitle: const Text("23 Tasks", style: TextStyle(fontSize: 12,),),
-                    trailing:                       CircularStepProgressIndicator(
+                    subtitle: const Text("23 Tasks", style: TextStyle(fontSize: 12,)),
+                    trailing:
+                    CircularStepProgressIndicator(
                       totalSteps: 100,
                       currentStep: 80,
                       stepSize: 8,
@@ -301,6 +303,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   ),
                 )),
+                const SizedBox(height: AppSizes.defaultSpace + 60),
               ],
             ),
           ),

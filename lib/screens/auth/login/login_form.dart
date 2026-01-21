@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:get/get.dart';
-import '../../../utils/constants/colors.dart';
-import '../../../utils/constants/size.dart';
-import '../../../utils/constants/text_string.dart';
-import '../../bottom_navigation.dart';
-
-
+import 'package:todo/utils/constants/size.dart';
+import 'package:todo/utils/constants/colors.dart';
+import 'package:todo/utils/constants/text_string.dart';
+import 'package:todo/screens/bottom_navigation.dart';
 
 
 class LoginForm extends StatelessWidget {
