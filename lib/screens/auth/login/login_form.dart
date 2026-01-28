@@ -1,122 +1,204 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:iconsax/iconsax.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:get/get.dart';
-import 'package:todo/utils/constants/size.dart';
-import 'package:todo/utils/constants/colors.dart';
-import 'package:todo/utils/constants/text_string.dart';
 import 'package:todo/screens/bottom_navigation.dart';
+import 'package:todo/utils/helpers/storage_utility.dart';
+import '../../../utils/constants/size.dart';
+import '../../../utils/constants/text_string.dart';
 
+class LoginForm extends StatefulWidget {
+  const LoginForm({super.key});
 
-class LoginForm extends StatelessWidget {
-  const LoginForm({
-    super.key,
-  });
+  @override
+  State<LoginForm> createState() => _LoginFormState();
+}
+
+class _LoginFormState extends State<LoginForm> {
+  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final GlobalKey<FormState> loginFormKey = GlobalKey<FormState>();
+  
+  bool isLoading = false;
+  bool hidePassword = true;
+
+  Future<void> login() async {
+    if (!loginFormKey.currentState!.validate()) return;
+
+    setState(() => isLoading = true);
+
+    try {
+      final dio = Dio();
+      
+      // Add interceptor to debug login response
+      dio.interceptors.add(InterceptorsWrapper(
+        onResponse: (response, handler) {
+          print("LOGIN RESPONSE HEADERS: ${response.headers}");
+          print("LOGIN RESPONSE DATA: ${response.data}");
+          return handler.next(response);
+        },
+      ));
+
+      final response = await dio.post(
+        'https://authentication-liart-kappa.vercel.app/api/auth/login',
+        data: {
+          'username': usernameController.text.trim(),
+          'password': passwordController.text.trim(),
+        },
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final dynamic responseBody = response.data;
+        
+        String accessToken = '';
+        String refreshToken = '';
+
+        // Safely extract tokens from body if present
+        if (responseBody is Map) {
+          final dataField = responseBody['data'];
+          if (dataField is Map) {
+            accessToken = dataField['accessToken']?.toString() ?? '';
+            refreshToken = dataField['refreshToken']?.toString() ?? '';
+          }
+          
+          // Check top level too
+          if (accessToken.isEmpty) accessToken = responseBody['accessToken']?.toString() ?? '';
+          if (refreshToken.isEmpty) refreshToken = responseBody['refreshToken']?.toString() ?? '';
+        }
+
+        // Extract from Set-Cookie headers (Common for this specific API)
+        final List<String>? cookies = response.headers['set-cookie'];
+        if (cookies != null) {
+          for (var cookie in cookies) {
+            if (cookie.contains('accessToken=')) {
+              final parts = cookie.split('accessToken=');
+              if (parts.length > 1) {
+                accessToken = parts[1].split(';')[0];
+              }
+            }
+            if (cookie.contains('refreshToken=')) {
+              final parts = cookie.split('refreshToken=');
+              if (parts.length > 1) {
+                refreshToken = parts[1].split(';')[0];
+              }
+            }
+          }
+        }
+
+        print("FINAL EXTRACTED ACCESS TOKEN: $accessToken");
+
+        if (accessToken.isNotEmpty) {
+          await TLocalStorage.saveData('accessToken', accessToken);
+          await TLocalStorage.saveData('refreshToken', refreshToken);
+          Get.offAll(() => const BottomNavigation());
+        } else {
+          Get.snackbar('Login Error', 'Authentication successful but tokens not found.');
+        }
+      }
+    } catch (e) {
+      print("Login Error Exception: $e");
+      String errorMessage = "Something went wrong";
+      
+      if (e is DioException) {
+        final errorData = e.response?.data;
+        if (errorData is Map) {
+          errorMessage = errorData['message']?.toString() ?? errorMessage;
+        } else if (errorData is String) {
+          errorMessage = errorData;
+        }
+      } else {
+        errorMessage = e.toString();
+      }
+
+      Get.snackbar(
+        'Login Failed',
+        errorMessage,
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.withValues(alpha: 0.1),
+        colorText: Colors.red,
+      );
+    } finally {
+      if (mounted) setState(() => isLoading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSizes.defaultSpace),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          /// Title & Sub-Title
-          Text(
-            AppTexts.tLoginTitle,
-            style: Theme.of(context).textTheme.headlineMedium,
-          ),
-          const SizedBox(height: AppSizes.sm),
-          Text(
-            AppTexts.tLoginSubTitle,
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
-
-          /// Form
-          Form(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: AppSizes.spaceBtwSections),
-              child: Column(
-                children: [
-                  /// Email
-                  TextFormField(
-                    decoration: const InputDecoration(
-                      prefixIcon: Icon(LucideIcons.mailbox),
-                      labelText: AppTexts.tEmail,
-                    ),
-                  ),
-                  const SizedBox(height: AppSizes.spaceBtwInputFields),
-
-                  /// Password
-                  TextFormField(
-                    decoration: const InputDecoration(
-                      prefixIcon: Icon(Iconsax.password_check),
-                      labelText: AppTexts.tPassword,
-                      suffixIcon: Icon(Iconsax.eye_slash),
-                    ),
-                  ),
-                  const SizedBox(height: AppSizes.spaceBtwInputFields / 2),
-
-                  /// Remember Me & Forget Password
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      /// Forget Password
-                      TextButton(
-                        onPressed: ()=>Get.toNamed('/forget_password'),
-                        child: const Text(
-                          AppTexts.tForgetPassword,
-                          style: TextStyle(color: TColors.dark),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: AppSizes.spaceBtwSections),
-
-                  /// Sign In Button with Gradient
-                  GestureDetector(
-                    onTap: () => Get.to(()=> BottomNavigation()),
-                    child: Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(AppSizes.md),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(AppSizes.borderRadiusLg),
-                        gradient: const LinearGradient(
-                          colors: [TColors.primary, Color(0xFFFFB800)],
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: TColors.primary.withValues(alpha: 0.3),
-                            blurRadius: 10,
-                            offset: const Offset(0, 5),
-                          )
-                        ],
-                      ),
-                      child: const Center(
-                        child: Text(
-                          AppTexts.tLogin,
-                          style: TextStyle(color: TColors.white, fontWeight: FontWeight.bold, fontSize: 16),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: AppSizes.spaceBtwItems),
-
-                  /// Create Account Button
-                  SizedBox(
-                    width: double.infinity,
-                    child: OutlinedButton(
-                      onPressed: ()=> Get.toNamed('/signup'),
-                      style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: TColors.grey),
-                      ),
-                      child: const Text(AppTexts.tSignup),
-                    ),
-                  ),
-                ],
+    return Form(
+      key: loginFormKey,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: AppSizes.spaceBtwSections),
+        child: Column(
+          children: [
+            // Username
+            TextFormField(
+              controller: usernameController,
+              validator: (value) => value!.isEmpty ? 'Username is required' : null,
+              decoration: const InputDecoration(
+                prefixIcon: Icon(Icons.person_outline),
+                labelText: "Username",
+                contentPadding: EdgeInsets.all(AppSizes.md),
               ),
             ),
-          ),
-        ],
+            const SizedBox(height: AppSizes.spaceBtwInputFields),
+
+            // Password
+            TextFormField(
+              controller: passwordController,
+              validator: (value) => value!.isEmpty ? 'Password is required' : null,
+              obscureText: hidePassword,
+              decoration: InputDecoration(
+                prefixIcon: const Icon(Icons.lock_outline),
+                labelText: AppTexts.password,
+                contentPadding: const EdgeInsets.all(AppSizes.md),
+                suffixIcon: IconButton(
+                  onPressed: () => setState(() => hidePassword = !hidePassword),
+                  icon: Icon(hidePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined),
+                ),
+              ),
+            ),
+            const SizedBox(height: AppSizes.spaceBtwInputFields / 2),
+
+            // Forget Password & Remember Me
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    SizedBox(
+                      height: 24,
+                      width: 24,
+                      child: Checkbox(value: true, onChanged: (value) {}),
+                    ),
+                    const Text(AppTexts.tRememberMe),
+                  ],
+                ),
+                TextButton(
+                  onPressed: () => Get.toNamed('/forget_password'),
+                  child: const Text(AppTexts.tForgetPassword),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSizes.spaceBtwSections),
+
+            // Sign In Button
+            SizedBox(
+              width: double.infinity,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: AppSizes.xs),
+                child: ElevatedButton(
+                  onPressed: isLoading ? null : login,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                  ),
+                  child: isLoading 
+                    ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                    : const Text(AppTexts.tLogin, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

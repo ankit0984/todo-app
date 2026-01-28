@@ -10,11 +10,15 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: TColors.white,
+
       body: SingleChildScrollView(
         child: Column(
           children: [
             ClipPaths(),
-            LoginForm(),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: LoginForm(),
+            ),
           ],
         ),
       ),
